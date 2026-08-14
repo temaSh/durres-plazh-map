@@ -30,7 +30,7 @@
       <section class="note"><strong>Как читать карту.</strong> Наведи на метку — увидишь цену; нажми — раскроется карточка и ссылка.<br><br><span class="dot green"></span><strong>Зелёная точка</strong> — вариант, полученный от нашего агента и проверенный им по адресу. Это не заменяет проверку документов и квартиры на месте.<br><span class="dot yellow"></span><strong>Жёлтая точка</strong> — карточка из открытых источников; адрес и наличие ещё не подтверждены нашим агентом.<br><span class="dot red"></span><strong>Красная точка</strong> — предложение без точного адреса; показан только примерный район.</section>
       <section class="card"><h2>Фильтры</h2><div class="filters"><button class="active" data-filter="all">Все точки</button><button data-filter="under90">До €90 тыс.</button><button data-filter="core">Только Plazh</button><button data-filter="pin">Точные пины</button></div><p class="meta" id="filterResult">Показано: 4 точки.</p></section>
       <section class="card" id="selectedCard"></section>
-      <section class="legend"><span><i class="dot green"></i>проверено агентом</span><span><i class="dot yellow"></i>открытый источник</span><span><i class="dot red"></i>примерный район</span><span><i class="dot blue"></i>целевая городская зона</span></section>
+      <section class="legend"><span><i class="dot green"></i>проверено агентом</span><span><i class="dot yellow"></i>открытый источник</span><span><i class="dot red"></i>примерный район</span></section>
     </aside>
   </main>
   <section class="list"><h2>Приоритетная таблица</h2><p class="subtitle">Строки всегда идут сверху вниз по смыслу: смотреть → проверить цену → проверить → резерв → документы → красная проверка → вне фокуса. Снятая или устаревшая карточка исчезает и с карты, и отсюда.</p><table><thead><tr><th>Приоритет / лот</th><th>Цена и площадь</th><th>Этаж / дом</th><th>Сильные стороны</th><th>Проверить</th></tr></thead><tbody id="listingRows"></tbody></table></section>
@@ -57,8 +57,6 @@
     if (!window.L) { document.getElementById('map').innerHTML='<div style="padding:25px">Не загрузилась карта улиц. Проверьте подключение к интернету и обновите страницу.</div>'; throw new Error('Leaflet не загрузился'); }
     const map=L.map('map',{scrollWheelZoom:true,zoomControl:true,dragging:true,touchZoom:true,doubleClickZoom:true,boxZoom:true,keyboard:true}).setView([41.3056,19.4932],14);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap'}).addTo(map);
-    const targetZone=L.circle([41.3056,19.4932],{radius:1700,color:'#2674a8',weight:1.5,fillColor:'#2674a8',fillOpacity:.06,dashArray:'5 5'}).addTo(map);
-    targetZone.bindPopup('<h3>Рабочая зона Plazh</h3>Городская пляжная часть Дурреса. Круг не является официальной границей: для каждой квартиры отдельно проверяем путь до моря и остановки.');
     const icon=color=>L.divIcon({className:'',html:`<span style="display:block;width:20px;height:20px;border-radius:50%;background:${color};border:3px solid white;box-shadow:0 1px 5px #3348"></span>`,iconSize:[20,20],iconAnchor:[10,10],popupAnchor:[0,-10]});
     const markers=new Map(); const popup=l=>`<h3>${l.title}</h3><p><b>${l.priceText}</b> · ${l.type} · ${l.size}<br>${l.floor}; ${l.published}</p><p><b>Приоритет:</b> ${l.priority}</p><p><b>Проверить:</b> ${l.concerns}</p>${links(l)}`;
     const markerColor = l => l.location==='agent'?'#198754':l.location==='approx'?'#c63f3f':'#c98b00';
