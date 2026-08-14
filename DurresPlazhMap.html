@@ -21,7 +21,7 @@
 </head>
 <body>
   <header>
-    <h1>Дуррес, Plazh: живая карта свежих вариантов (обновлено: 15.08.2026, 01:30, Киев)</h1>
+    <h1>Дуррес, Plazh: живая карта свежих вариантов (обновлено: 15.08.2026, 01:37, Киев)</h1>
     <p class="subtitle">Витрина: готовые 1+1 и компактные 2+1 в городской пляжной полосе Plazh, Дуррес. Свежие карточки — до 21 дня; прежние точки сохранены ниже как «уточнить наличие», чтобы не терять ориентиры. Пешком до моря — до 1 км.<br><span class="dot green"></span>Зелёная точка — предложение, подтверждённое нашим агентом; <span class="dot yellow"></span>жёлтая — объявление из открытых источников; <span class="dot red"></span>красная — без точного адреса.</p>
   </header>
   <main>
@@ -58,8 +58,9 @@
     const displayCoord=(l,i)=>{if(l.location!=='approx')return l.coord;const n=i%3-1;return [l.coord[0]+n*.00030,l.coord[1]+(i%2?.00022:-.00022)];};
     listings.forEach((l,i)=>{const m=L.marker(displayCoord(l,i),{icon:icon(markerColor(l))}).bindPopup(popup(l)).bindTooltip(`${l.priceText} · ${l.type}`,{direction:'top',offset:[0,-12]});markers.set(l.id,m);});
     const priorityRank={'Сначала уточнить':1,'С осторожностью':2,'Красная проверка':3,'Уточнить наличие':4};
+    const priorityClass=p=>p==='Красная проверка'?'watch':p==='С осторожностью'?'source':p==='Сначала уточнить'?'source':'good';
     const focusOnMap=id=>{const l=listings.find(x=>x.id===id),m=markers.get(id);if(!l||!m)return;map.setView(m.getLatLng(),16,{animate:true});m.openPopup();document.getElementById('map').scrollIntoView({behavior:'smooth',block:'center'});};
-    const render=()=>{const ordered=[...listings].sort((a,b)=>(priorityRank[a.priority]||99)-(priorityRank[b.priority]||99)||((a.price??999999)-(b.price??999999)));ordered.forEach(l=>markers.get(l.id).addTo(map));document.getElementById('listingRows').innerHTML=ordered.map(l=>`<tr><td><span class="tag ${l.core?'good':'watch'}">${l.priority}</span><br><button class="show-on-map" data-id="${l.id}" type="button">Показать на карте</button><br>${links(l)}</td><td>${l.priceText}; ${l.type}; ${l.size}</td><td>${l.floor}<br>${l.certificate}<br>${beachLine(l)}</td><td>${l.positives}</td><td>${l.concerns}</td></tr>`).join('');document.querySelectorAll('.show-on-map').forEach(b=>b.addEventListener('click',()=>focusOnMap(b.dataset.id)));};
+    const render=()=>{const ordered=[...listings].sort((a,b)=>(priorityRank[a.priority]||99)-(priorityRank[b.priority]||99)||((a.price??999999)-(b.price??999999)));ordered.forEach(l=>markers.get(l.id).addTo(map));document.getElementById('listingRows').innerHTML=ordered.map(l=>`<tr><td><span class="tag ${priorityClass(l.priority)}">${l.priority}</span><br>${links(l)}</td><td>${l.priceText}; ${l.type}; ${l.size}<br><button class="show-on-map" data-id="${l.id}" type="button">Показать на карте</button></td><td>${l.floor}<br>${l.certificate}<br>${beachLine(l)}</td><td>${l.positives}</td><td>${l.concerns}</td></tr>`).join('');document.querySelectorAll('.show-on-map').forEach(b=>b.addEventListener('click',()=>focusOnMap(b.dataset.id)));};
     render();
     const checklist=document.getElementById('checklist'); const checklistToggle=document.getElementById('checklistToggle'); checklistToggle.addEventListener('click',()=>{const expanded=checklist.classList.toggle('expanded');checklistToggle.textContent=expanded?'Свернуть':'Развернуть полностью';checklistToggle.setAttribute('aria-expanded',String(expanded));});
   </script>
