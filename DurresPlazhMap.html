@@ -69,7 +69,7 @@
 <body>
   <header>
     <h1>Дуррес: текущие осмотры — 10.09.2026 · 5 объектов</h1>
-    <p class="subtitle">На карте — объекты, которые Артём осмотрел лично. Дата указана в каждой карточке. Одна точка объединяет несколько квартир на 12-м этаже.<br><span class="dot green"></span>Зелёная — геометка из переписки об осмотре. <span class="dot red"></span>Красная — осмотр состоялся, но геометка приблизительная. Факт осмотра не означает проверку документов.</p>
+    <p class="subtitle">На карте — объекты, которые Артём осмотрел лично. Дата указана в каждой карточке. Одна точка объединяет несколько квартир на 12-м этаже.<br><span class="dot green"></span>Зелёная — геометка из переписки об осмотре. <span class="dot yellow"></span>Жёлтая — осмотр состоялся, но геометка приблизительная. Факт осмотра не означает проверку документов.</p>
   </header>
   <main>
     <section id="map" aria-label="Интерактивная карта Plazh, Дуррес"></section>
@@ -331,7 +331,7 @@
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap'}).addTo(map);
     const icon=(color,badge='')=>{const d=badge?26:20;return L.divIcon({className:'',html:`<span style="display:flex;width:${d}px;height:${d}px;border-radius:50%;background:${color};border:3px solid white;box-shadow:0 1px 5px #3348;color:white;align-items:center;justify-content:center;font:700 12px/1 -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif">${badge}</span>`,iconSize:[d,d],iconAnchor:[d/2,d/2],popupAnchor:[0,-d/2]});};
     const markers=new Map(); const popup=l=>`<h3>${l.title}</h3><p><b>${l.priceText}</b> · ${l.type} · ${l.size}<br>${l.floor}; ${l.published}</p><p>${beachLine(l)}</p><p><b>Приоритет:</b> ${l.priority}</p><p><b>Проверить:</b> ${l.concerns}</p>${links(l)}`;
-    const markerColor = l => (l.location==='agent'||l.location==='exact')?'#198754':l.location==='discarded'?'#6c757d':l.location==='approx'?'#c63f3f':'#c98b00';
+    const markerColor = l => (l.location==='agent'||l.location==='exact')?'#198754':l.location==='discarded'?'#6c757d':l.location==='approx'?'#c98b00':'#c98b00';
     const displayCoord=l=>l.coord;
     listings.forEach((l,i)=>{if(!Array.isArray(l.coord)||l.location==='discarded')return;const badge=String(i+1);const m=L.marker(displayCoord(l,i),{icon:icon(markerColor(l),badge)}).bindPopup(popup(l)).bindTooltip(`${badge+'. '}${l.priceText} · ${l.type}`,{direction:'top',offset:[0,-12]});markers.set(l.id,m);});
     const priorityRank={'Сначала уточнить':1,'С осторожностью':2,'Агентский ориентир':3,'Красная проверка':4,'Уточнить наличие':5,'Ориентир рынка':6,'Вне фокуса':7};
