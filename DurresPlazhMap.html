@@ -229,6 +229,7 @@
       "Геометка осмотра"
     ],
     "priceText": "€140 000",
+    "pricePerM2Text": "€2 333–2 545/м² внутри; €1 400–1 474/м² с террасой",
     "published": "Квартира рассмотрена — 10.09.2026",
     "certificate": "Документы не проверены",
     "beachWalk": 80,
@@ -289,6 +290,7 @@
       "Геометка осмотра"
     ],
     "priceText": "€75 000",
+    "pricePerM2Text": "€1 667/м²",
     "published": "Квартира рассмотрена — 10.09.2026",
     "certificate": "Документы не проверены",
     "beachWalk": 180,
@@ -361,6 +363,7 @@
       "Геометка осмотра"
     ],
     "priceText": "€75 000",
+    "pricePerM2Text": "€1 807/м²",
     "published": "Квартира рассмотрена — 10.09.2026",
     "certificate": "Документы не проверены",
     "beachWalk": 200,
@@ -429,6 +432,7 @@
       "Геометка осмотра"
     ],
     "priceText": "Цена не уточнена",
+    "pricePerM2Text": "цена за м² не рассчитывается — цена и площади не уточнены",
     "published": "Квартира рассмотрена — 10.09.2026",
     "certificate": "Документы не проверены",
     "beachWalk": 2300,
@@ -917,6 +921,7 @@
       "Геометка осмотра"
     ],
     "priceText": "€80 000",
+    "pricePerM2Text": "€1 067/м²",
     "published": "Квартира рассмотрена — 10.09.2026",
     "certificate": "Документы не проверены",
     "beachWalk": 590,
@@ -1091,7 +1096,7 @@
     const map=L.map('map',{scrollWheelZoom:true,zoomControl:true,dragging:true,touchZoom:true,doubleClickZoom:true,boxZoom:true,keyboard:true}).setView([41.3056,19.4932],14);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap'}).addTo(map);
     const icon=(color,badge='')=>{const d=badge?26:20;return L.divIcon({className:'',html:`<span style="display:flex;width:${d}px;height:${d}px;border-radius:50%;background:${color};border:3px solid white;box-shadow:0 1px 5px #3348;color:white;align-items:center;justify-content:center;font:700 12px/1 -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif">${badge}</span>`,iconSize:[d,d],iconAnchor:[d/2,d/2],popupAnchor:[0,-d/2]});};
-    const markers=new Map(); const popup=l=>`<h3>${l.title}</h3><p><b>${l.priceText}</b> · ${l.type} · ${l.size}<br>${l.floor}; ${l.published}</p><p>${beachLine(l)}</p><p><b>Приоритет:</b> ${l.priority}</p><p><b>Проверить:</b> ${l.concerns}</p>${links(l)}`;
+    const markers=new Map(); const priceLine=l=>`${l.priceText} <span class="meta">(${l.pricePerM2Text})</span>`; const popup=l=>`<h3>${l.title}</h3><p><b>${priceLine(l)}</b> · ${l.type} · ${l.size}<br>${l.floor}; ${l.published}</p><p>${beachLine(l)}</p><p><b>Приоритет:</b> ${l.priority}</p><p><b>Проверить:</b> ${l.concerns}</p>${links(l)}`;
     const markerColor = l => (l.location==='agent'||l.location==='exact')?'#198754':l.location==='discarded'?'#6c757d':l.location==='approx'?'#c98b00':'#c98b00';
     const displayCoord=l=>l.coord;
     listings.forEach((l,i)=>{if(!Array.isArray(l.coord)||l.location==='discarded')return;const badge=String(i+1);const m=L.marker(displayCoord(l,i),{icon:icon(markerColor(l),badge)}).bindPopup(popup(l),{maxWidth:340,maxHeight:300}).bindTooltip(`${badge+'. '}${l.priceText} · ${l.type}`,{direction:'top',offset:[0,-12]});markers.set(l.id,m);});
@@ -1099,7 +1104,7 @@
     const priorityClass=p=>p==='Красная проверка'||p==='Вне фокуса'||p==='Ориентир рынка'?'watch':p==='С осторожностью'||p==='Сначала уточнить'||p==='Агентский ориентир'?'source':'good';
     let activeBeachRoute;
     const focusOnMap=id=>{const l=listings.find(x=>x.id===id),m=markers.get(id);if(!l||!m)return;if(activeBeachRoute)map.removeLayer(activeBeachRoute);activeBeachRoute=L.polyline(l.beachRoute,{color:'#2674a8',weight:4,opacity:0.85}).addTo(map);map.fitBounds(activeBeachRoute.getBounds(),{padding:[35,35],maxZoom:18,animate:false});m.openPopup();document.getElementById('map').scrollIntoView({behavior:'smooth',block:'center'});};
-    const render=()=>{const ordered=[...listings];ordered.forEach(l=>markers.get(l.id)?.addTo(map));document.getElementById('listingRows').innerHTML=ordered.map(l=>`<tr><td><span class="tag ${priorityClass(l.priority)}">${l.priority}</span><br><strong>${l.title}</strong><br>${links(l)}</td><td>${l.priceText}; ${l.type}; ${l.size}<br>${markers.has(l.id)?`<button class="show-on-map" data-id="${l.id}" type="button">Квартира и путь до песка</button>`:'<span class="meta">Пин не раскрыт — не ставим вымышленную точку</span>'}</td><td>${l.floor}<br>${l.certificate}<br>${beachLine(l)}</td><td>${l.positives}</td><td>${l.concerns}</td></tr>`).join('');document.querySelectorAll('.show-on-map').forEach(b=>b.addEventListener('click',()=>focusOnMap(b.dataset.id)));};
+    const render=()=>{const ordered=[...listings];ordered.forEach(l=>markers.get(l.id)?.addTo(map));document.getElementById('listingRows').innerHTML=ordered.map(l=>`<tr><td><span class="tag ${priorityClass(l.priority)}">${l.priority}</span><br><strong>${l.title}</strong><br>${links(l)}</td><td>${priceLine(l)}; ${l.type}; ${l.size}<br>${markers.has(l.id)?`<button class="show-on-map" data-id="${l.id}" type="button">Квартира и путь до песка</button>`:'<span class="meta">Пин не раскрыт — не ставим вымышленную точку</span>'}</td><td>${l.floor}<br>${l.certificate}<br>${beachLine(l)}</td><td>${l.positives}</td><td>${l.concerns}</td></tr>`).join('');document.querySelectorAll('.show-on-map').forEach(b=>b.addEventListener('click',()=>focusOnMap(b.dataset.id)));};
     render();
     map.fitBounds(listings.map(l=>l.coord),{padding:[30,30]});
     const checklist=document.getElementById('checklist'); const checklistToggle=document.getElementById('checklistToggle'); checklistToggle.addEventListener('click',()=>{const expanded=checklist.classList.toggle('expanded');checklistToggle.textContent=expanded?'Свернуть':'Развернуть полностью';checklistToggle.setAttribute('aria-expanded',String(expanded));});
